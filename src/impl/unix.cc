@@ -113,8 +113,24 @@ Serial::SerialImpl::SerialImpl (const string &port, unsigned long baudrate,
     baudrate_ (baudrate), parity_ (parity),
     bytesize_ (bytesize), stopbits_ (stopbits), flowcontrol_ (flowcontrol)
 {
-  pthread_mutex_init(&this->read_mutex, NULL);
-  pthread_mutex_init(&this->write_mutex, NULL);
+  int status;
+
+  status = pthread_mutex_init(&this->read_mutex, NULL);
+  if (0 != status) {
+    stringstream ss;
+    ss << "Failed to initialize read mutex: " <<
+      status << " " << strerror(status);
+    throw SerialException (ss.str().c_str());
+  }
+
+  status = pthread_mutex_init(&this->write_mutex, NULL);
+  if (0 != status) {
+    stringstream ss;
+    ss << "Failed to initialize write mutex: " <<
+      status << " " << strerror(status);
+    throw SerialException (ss.str().c_str());
+  }
+
   if (port_.empty () == false)
     open ();
 }

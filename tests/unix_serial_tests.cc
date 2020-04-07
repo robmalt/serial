@@ -57,7 +57,7 @@ protected:
   }
 
   virtual void TearDown() {
-    port1->close();
+    if (port1) port1->close();
     delete port1;
   }
 
